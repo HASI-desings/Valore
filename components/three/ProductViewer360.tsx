@@ -6,12 +6,16 @@ import { useState } from "react";
 // now. Swap `frames` for real turntable renders (per requirements.md's
 // fallback-asset guidance) or a real 3D model later — the drag interaction
 // contract (1:1 pointer tracking, per design.md) is already correct.
+//
+// Fills its parent container (h-full w-full) rather than setting its own
+// aspect ratio, so it composes correctly inside HudFrame/SpecPointer's
+// percentage-based overlay on the product page.
 export function ProductViewer360({ imageUrl }: { imageUrl: string }) {
   const [rotation, setRotation] = useState(0);
 
   return (
     <div
-      className="relative w-full aspect-square rounded-lg bg-valore-surface overflow-hidden cursor-grab active:cursor-grabbing select-none"
+      className="relative w-full h-full bg-valore-surface overflow-hidden cursor-grab active:cursor-grabbing select-none"
       onPointerMove={(e) => {
         if (e.buttons !== 1) return;
         setRotation((r) => r + e.movementX * 0.5);
