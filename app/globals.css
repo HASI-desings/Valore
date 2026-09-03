@@ -43,6 +43,48 @@ html, body {
   transition: background 500ms cubic-bezier(0.22, 1, 0.36, 1), opacity 500ms;
 }
 
+/* RGB-split glitch text reveal, per the reference video's wordmark entrance.
+   Two pseudo-elements offset in red/cyan channels, flickering briefly then
+   settling — pure CSS, no video asset required. */
+.glitch-text {
+  position: relative;
+}
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.glitch-text::before {
+  color: #ff3b3b;
+  opacity: 0.6;
+  animation: glitchOffset1 0.4s steps(2, end) 1;
+  mix-blend-mode: screen;
+}
+.glitch-text::after {
+  color: #3bd1ff;
+  opacity: 0.6;
+  animation: glitchOffset2 0.4s steps(2, end) 1;
+  mix-blend-mode: screen;
+}
+@keyframes glitchOffset1 {
+  0% { transform: translate(0, 0); opacity: 0.8; }
+  25% { transform: translate(-3px, 1px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, 0); }
+  100% { transform: translate(0, 0); opacity: 0; }
+}
+@keyframes glitchOffset2 {
+  0% { transform: translate(0, 0); opacity: 0.8; }
+  25% { transform: translate(3px, -1px); }
+  50% { transform: translate(-2px, 1px); }
+  75% { transform: translate(1px, 0); }
+  100% { transform: translate(0, 0); opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
