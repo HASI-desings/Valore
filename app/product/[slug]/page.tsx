@@ -24,7 +24,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
   const variant = product.variants.find((v) => v.color === colorName) ?? product.variants[0];
 
   function handleAddToCart() {
-    if (!size) return;
+    if (!size || !product) return;
     addItem({
       productId: product.id,
       slug: product.slug,
