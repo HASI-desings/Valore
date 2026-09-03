@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { OrderTrackerStepper } from "@/components/ui/OrderTrackerStepper";
 import { Button } from "@/components/ui/Button";
 import type { Order } from "@/types/order";
 
-export default function ConfirmationPage() {
+function ConfirmationContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("order");
   const [order, setOrder] = useState<Order | null>(null);
@@ -55,5 +55,13 @@ export default function ConfirmationPage() {
         <Button>Continue Shopping</Button>
       </Link>
     </div>
+  );
+}
+
+export default function ConfirmationPage() {
+  return (
+    <Suspense fallback={<div className="px-6 py-20 text-center text-valore-fog">Loading...</div>}>
+      <ConfirmationContent />
+    </Suspense>
   );
 }
