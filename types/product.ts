@@ -1,3 +1,13 @@
+export interface ProductSpecPoint {
+  id: string;
+  x: number; // percentage 0-100, position of the dot on the garment image
+  y: number; // percentage 0-100
+  labelX: number; // percentage 0-100, where the label sits
+  labelY: number; // percentage 0-100
+  label: string; // 3-5 word tagline max, per design spec
+  side: "left" | "right";
+}
+
 export interface ProductVariant {
   color: string;
   colorHex: string;
@@ -15,6 +25,7 @@ export interface Product {
   priceRs: number;
   description: string;
   variants: ProductVariant[];
+  specPoints?: ProductSpecPoint[]; // HUD callout tags, per creative-director spec
 }
 
 export interface Bundle {
