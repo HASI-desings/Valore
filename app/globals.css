@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Neue Montreal", "General Sans", ui-sans-serif, sans-serif;
+  --font-body: ui-sans-serif, system-ui, sans-serif;
+}
+
+html, body {
+  background: #0a0a0b;
+  color: #e8e4dc;
+  overscroll-behavior: none;
+}
+
+/* Subtle film-grain overlay, barely visible, per design.md */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Glassmorphism recipe: blur + subtle bright top edge, never flat semi-transparent (design.md) */
+.glass-surface {
+  backdrop-filter: blur(18px);
+  background: rgba(26, 26, 29, 0.55);
+  border-top: 1px solid rgba(232, 228, 220, 0.08);
+  border-left: 1px solid rgba(232, 228, 220, 0.04);
+}
+
+/* Ambient glow blob behind 3D asset — retinted per variant via CSS var (creative-director spec) */
+.ambient-glow {
+  --glow-color: #c9962c;
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, var(--glow-color) 0%, transparent 60%);
+  opacity: 0.25;
+  filter: blur(80px);
+  transition: background 500ms cubic-bezier(0.22, 1, 0.36, 1), opacity 500ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 150ms !important;
+    scroll-behavior: auto !important;
+  }
+}
