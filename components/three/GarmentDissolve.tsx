@@ -43,8 +43,9 @@ export function GarmentDissolve({ images, intervalMs = 3200, className = "" }: G
     if (loadedImages.length < 1) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const ctx2d = canvas.getContext("2d");
+    if (!ctx2d) return;
+    const ctx = ctx2d; // non-null alias — TS doesn't retain narrowing of `ctx2d` inside nested closures below
 
     const dpr = window.devicePixelRatio || 1;
     const width = canvas.clientWidth;
