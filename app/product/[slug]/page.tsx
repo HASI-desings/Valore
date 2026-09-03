@@ -4,6 +4,8 @@ import { useState, useRef } from "react";
 import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/lib/data/products";
 import { ProductViewer360 } from "@/components/three/ProductViewer360";
+import { HudFrame } from "@/components/three/HudFrame";
+import { SpecPointer } from "@/components/three/SpecPointer";
 import { ColorSelector } from "@/components/product/ColorSelector";
 import { SizeSelector } from "@/components/product/SizeSelector";
 import { FitConfidenceSizer } from "@/components/product/FitConfidenceSizer";
@@ -56,7 +58,18 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
   return (
     <div className="px-6 md:px-12 py-12 max-w-5xl mx-auto grid md:grid-cols-2 gap-12">
       <AddToCartAnimation flights={flights} />
-      <ProductViewer360 imageUrl={variant.imageUrl} />
+
+      {/* HUD interface per the reference video: ruler chrome + spec pointer
+          callouts layered over the 360 viewer. specPoints is optional per
+          product — only the hoodie has them seeded for now. */}
+      <div className="relative rounded-lg overflow-hidden bg-valore-surface aspect-square">
+        <HudFrame>
+          <div className="relative w-full h-full">
+            <ProductViewer360 imageUrl={variant.imageUrl} />
+            {product.specPoints && <SpecPointer points={product.specPoints} />}
+          </div>
+        </HudFrame>
+      </div>
 
       <div className="space-y-6">
         <div>
