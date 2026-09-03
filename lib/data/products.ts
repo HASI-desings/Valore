@@ -11,6 +11,12 @@ export const PRODUCTS: Product[] = [
     category: "hoodie",
     priceRs: 6500,
     description: "Heavyweight fleece, boxy fit, minimal branding.",
+    specPoints: [
+      { id: "chest", x: 50, y: 22, labelX: 78, labelY: 14, label: "BRUSHED FLEECE", side: "right" },
+      { id: "sleeve", x: 22, y: 40, labelX: 4, labelY: 34, label: "AERODYNAMIC CUT", side: "left" },
+      { id: "pocket", x: 48, y: 62, labelX: 4, labelY: 70, label: "REINFORCED SEAM", side: "left" },
+      { id: "hem", x: 62, y: 82, labelX: 82, labelY: 88, label: "TECH-KNIT HEM", side: "right" },
+    ],
     variants: [
       {
         color: "Charcoal",
