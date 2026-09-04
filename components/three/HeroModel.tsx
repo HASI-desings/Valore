@@ -13,9 +13,11 @@ import { detectDeviceTier } from "@/lib/device-tier";
 export function HeroModel({
   glowHex = "#c9962c",
   imageSequence,
+  alt,
 }: {
   glowHex?: string;
   imageSequence: string[];
+  alt: string; // descriptive text for the low-end static fallback image
 }) {
   const [tier, setTier] = useState<"high" | "low" | null>(null);
 
@@ -36,14 +38,20 @@ export function HeroModel({
         <div className="relative z-10 w-72 h-[28rem] rounded-xl overflow-hidden bg-valore-surface border border-valore-surfaceHigh">
           <img
             src={imageSequence[0]}
-            alt=""
+            alt={alt}
             className="w-full h-full object-cover"
             onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
           />
         </div>
       ) : (
+        // Canvas-rendered dissolve effect is decorative motion over real
+        // photos — canvas has no native alt, so a visually-hidden text
+        // alternative carries the description for screen readers.
         <div className="relative z-10 w-72 h-[28rem] md:w-80 md:h-[32rem]">
-          <GarmentDissolve images={imageSequence} intervalMs={3200} />
+          <span className="sr-only">{alt}</span>
+          <div aria-hidden="true" className="w-full h-full">
+            <GarmentDissolve images={imageSequence} intervalMs={3200} />
+          </div>
         </div>
       )}
     </div>
