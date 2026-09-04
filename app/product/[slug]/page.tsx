@@ -1,108 +1,52 @@
-"use client";
-
-import { useState, useRef } from "react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getProductBySlug } from "@/lib/data/products";
-import { ProductViewer360 } from "@/components/three/ProductViewer360";
-import { HudFrame } from "@/components/three/HudFrame";
-import { SpecPointer } from "@/components/three/SpecPointer";
-import { ColorSelector } from "@/components/product/ColorSelector";
-import { SizeSelector } from "@/components/product/SizeSelector";
-import { FitConfidenceSizer } from "@/components/product/FitConfidenceSizer";
-import { Button } from "@/components/ui/Button";
-import { useCartStore } from "@/lib/cart-store";
-import { AddToCartAnimation, type FlightEvent } from "@/components/cart/AddToCartAnimation";
+import { getProductBySlug, PRODUCTS } from "@/lib/data/products";
+import { ProductPageClient } from "@/components/product/ProductPageClient";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { StructuredData, productSchema } from "@/lib/structured-data";
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
+interface Props {
+  params: { slug: string };
+}
+
+// Pre-render all known product slugs at build time for speed + SEO.
+export function generateStaticParams() {
+  return PRODUCTS.map((p) => ({ slug: p.slug }));
+}
+
+export function generateMetadata({ params }: Props): Metadata {
+  const product = getProductBySlug(params.slug);
+  if (!product) {
+    return { title: "Product Not Found" };
+  }
+  return {
+    title: product.name,
+    description: `${product.description} Rs. ${product.priceRs.toLocaleString()} — shop ${product.name} at Valore.`,
+    alternates: { canonical: `/product/${product.slug}` },
+    openGraph: {
+      title: product.name,
+      description: product.description,
+      images: [product.variants[0].imageUrl],
+    },
+  };
+}
+
+export default function ProductPage({ params }: Props) {
   const product = getProductBySlug(params.slug);
   if (!product) notFound();
 
-  const [colorName, setColorName] = useState(product.variants[0].color);
-  const [size, setSize] = useState<string | null>(null);
-  const [flights, setFlights] = useState<FlightEvent[]>([]);
-  const buttonRef = useRef<HTMLDivElement>(null);
-  const addItem = useCartStore((s) => s.addItem);
-
-  const variant = product.variants.find((v) => v.color === colorName) ?? product.variants[0];
-
-  function handleAddToCart() {
-    if (!size || !product) return;
-    addItem({
-      productId: product.id,
-      slug: product.slug,
-      name: product.name,
-      size,
-      color: variant.color,
-      priceRs: product.priceRs,
-      quantity: 1,
-      imageUrl: variant.imageUrl,
-    });
-
-    // Fire the box-fold-and-fly flight from the button to the (approximate,
-    // fixed) cart icon position in the nav.
-    const rect = buttonRef.current?.getBoundingClientRect();
-    if (rect) {
-      setFlights((f) => [
-        ...f,
-        {
-          id: Date.now(),
-          startX: rect.left + rect.width / 2 - 28,
-          startY: rect.top,
-          endX: window.innerWidth - 60,
-          endY: 24,
-        },
-      ]);
-    }
-  }
-
   return (
-    <div className="px-6 md:px-12 py-12 max-w-5xl mx-auto grid md:grid-cols-2 gap-12">
-      <AddToCartAnimation flights={flights} />
-
-      {/* HUD interface per the reference video: ruler chrome + spec pointer
-          callouts layered over the 360 viewer. specPoints is optional per
-          product — only the hoodie has them seeded for now. */}
-      <div className="relative rounded-lg overflow-hidden bg-valore-surface aspect-square">
-        <HudFrame>
-          <div className="relative w-full h-full">
-            <ProductViewer360 imageUrl={variant.imageUrl} />
-            {product.specPoints && <SpecPointer points={product.specPoints} />}
-          </div>
-        </HudFrame>
+    <>
+      <StructuredData data={productSchema(product)} />
+      <div className="px-6 md:px-12 pt-12 max-w-5xl mx-auto">
+        <Breadcrumbs
+          items={[
+            { name: "Catalog", path: "/catalog" },
+            { name: product.name, path: `/product/${product.slug}` },
+          ]}
+        />
       </div>
-
-      <div className="space-y-6">
-        <div>
-          <h1 className="font-display text-2xl text-valore-bone">{product.name}</h1>
-          <p className="text-valore-fog text-sm mt-1">{product.description}</p>
-          <p className="text-accent-amber text-lg mt-3">Rs. {product.priceRs.toLocaleString()}</p>
-        </div>
-
-        <div>
-          <p className="text-valore-fog text-xs uppercase tracking-wider mb-2">Color — {variant.color}</p>
-          <ColorSelector
-            colors={product.variants.map((v) => ({ color: v.color, colorHex: v.colorHex }))}
-            selected={colorName}
-            onSelect={(c) => {
-              setColorName(c);
-              setSize(null);
-            }}
-          />
-        </div>
-
-        <div>
-          <p className="text-valore-fog text-xs uppercase tracking-wider mb-2">Size</p>
-          <SizeSelector sizes={variant.sizes} selected={size} onSelect={setSize} />
-        </div>
-
-        <FitConfidenceSizer onSuggest={setSize} />
-
-        <div ref={buttonRef}>
-          <Button className="w-full" onClick={handleAddToCart} disabled={!size}>
-            {size ? "Add to Bag" : "Select a size"}
-          </Button>
-        </div>
-      </div>
-    </div>
+      <ProductPageClient product={product} />
+    </>
   );
 }
