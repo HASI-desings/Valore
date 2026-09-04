@@ -28,7 +28,11 @@ export default function LandingPage() {
         </div>
 
         <div className="relative z-10 h-full w-full flex items-center justify-center">
-          <HeroModel glowHex={featured.variants[0].glowHex} imageSequence={heroSequence} />
+          <HeroModel
+            glowHex={featured.variants[0].glowHex}
+            imageSequence={heroSequence}
+            alt={`${featured.name} — available in ${featured.variants.map((v) => v.color).join(" and ")}`}
+          />
         </div>
 
         <div className="relative z-20 text-center mt-4 space-y-4 px-6">
