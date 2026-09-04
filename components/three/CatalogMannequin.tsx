@@ -10,10 +10,12 @@ export function CatalogMannequin({
   imageUrl,
   glowHex,
   active,
+  alt,
 }: {
   imageUrl: string;
   glowHex: string;
   active: boolean;
+  alt: string; // descriptive text, e.g. "Obsidian Hoodie in Charcoal" — required, not decorative
 }) {
   return (
     <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden bg-valore-surface">
@@ -27,7 +29,7 @@ export function CatalogMannequin({
             once assets exist — imageUrl prop stays the same shape either way. */}
         <img
           src={imageUrl}
-          alt=""
+          alt={alt}
           className="h-full w-full object-cover opacity-90"
           onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
         />
