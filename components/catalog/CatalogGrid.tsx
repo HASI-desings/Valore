@@ -1,57 +1,34 @@
-import type { Metadata, Viewport } from "next";
-import "./globals.css";
-import { Nav } from "@/components/ui/Nav";
-import { CartDrawer } from "@/components/cart/CartDrawer";
-import { StructuredData, organizationSchema, localBusinessSchema } from "@/lib/structured-data";
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/seo";
+"use client";
 
-// metadataBase makes every relative OG/Twitter image URL below resolve to an
-// absolute one automatically — required for social platforms to fetch them.
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: `${SITE_NAME} — Premium, Accessible`,
-    template: `%s — ${SITE_NAME}`, // page titles become "Page Name — Valore"
-  },
-  description: SITE_DESCRIPTION,
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    title: `${SITE_NAME} — Premium, Accessible`,
-    description: SITE_DESCRIPTION,
-    url: SITE_URL,
-    siteName: SITE_NAME,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${SITE_NAME} — Premium, Accessible`,
-    description: SITE_DESCRIPTION,
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+import { useState } from "react";
+import Link from "next/link";
+import { PRODUCTS } from "@/lib/data/products";
+import { CatalogMannequin } from "@/components/three/CatalogMannequin";
 
-export const viewport: Viewport = {
-  themeColor: "#0a0a0b",
-};
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const localBusiness = localBusinessSchema();
+export function CatalogGrid() {
+  const [hovered, setHovered] = useState<string | null>(null);
 
   return (
-    <html lang="en">
-      <body className="font-body bg-valore-void text-valore-bone min-h-screen">
-        <StructuredData data={organizationSchema()} />
-        {localBusiness && <StructuredData data={localBusiness} />}
-        <div className="grain-overlay" />
-        <Nav />
-        <main className="pt-20">{children}</main>
-        <CartDrawer />
-      </body>
-    </html>
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+      {PRODUCTS.map((p) => (
+        <Link
+          key={p.id}
+          href={`/product/${p.slug}`}
+          onMouseEnter={() => setHovered(p.id)}
+          onMouseLeave={() => setHovered(null)}
+        >
+          <CatalogMannequin
+            imageUrl={p.variants[0].imageUrl}
+            glowHex={p.variants[0].glowHex}
+            active={hovered === p.id}
+            alt={`${p.name} in ${p.variants[0].color}`}
+          />
+          <div className="mt-3">
+            <p className="text-valore-bone text-sm">{p.name}</p>
+            <p className="text-valore-fog text-xs">Rs. {p.priceRs.toLocaleString()}</p>
+          </div>
+        </Link>
+      ))}
+    </div>
   );
 }
