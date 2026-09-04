@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import { BUNDLES } from "@/lib/data/products";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+
+export const metadata: Metadata = {
+  title: "Deals & Combos",
+  description: "Bundle offers from Valore — save on curated combinations of hoodies, tees, and more.",
+  alternates: { canonical: "/deals" },
+};
 
 // Phase 8. Bundle add-to-cart flows through the same cart store as single
 // items — see the "you save X" line, sourced from real bundle vs regular
@@ -6,6 +14,7 @@ import { BUNDLES } from "@/lib/data/products";
 export default function DealsPage() {
   return (
     <div className="px-6 md:px-12 py-12 max-w-5xl mx-auto">
+      <Breadcrumbs items={[{ name: "Deals", path: "/deals" }]} />
       <h1 className="font-display text-3xl text-valore-bone mb-10">Deals & Combos</h1>
       <div className="grid md:grid-cols-2 gap-8">
         {BUNDLES.map((b) => {
