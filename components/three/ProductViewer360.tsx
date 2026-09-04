@@ -10,7 +10,7 @@ import { useState } from "react";
 // Fills its parent container (h-full w-full) rather than setting its own
 // aspect ratio, so it composes correctly inside HudFrame/SpecPointer's
 // percentage-based overlay on the product page.
-export function ProductViewer360({ imageUrl }: { imageUrl: string }) {
+export function ProductViewer360({ imageUrl, alt }: { imageUrl: string; alt: string }) {
   const [rotation, setRotation] = useState(0);
 
   return (
@@ -23,7 +23,7 @@ export function ProductViewer360({ imageUrl }: { imageUrl: string }) {
     >
       <img
         src={imageUrl}
-        alt=""
+        alt={alt}
         className="h-full w-full object-cover"
         style={{ transform: `rotateY(${rotation % 360}deg)` }}
         onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
